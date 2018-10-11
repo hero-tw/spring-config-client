@@ -16,9 +16,12 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'com.palantir.docker'
+apply plugin: 'jacoco'
+apply plugin: 'findbugs'
 
 group = 'com.hero'
 version = '0.0.1-SNAPSHOT'
@@ -44,14 +47,40 @@ dependencyManagement {
 	}
 }
 
-task unpack(type: Copy) {
-	dependsOn bootJar
-	from(zipTree("build/libs/${bootJar.archiveName}"))
-	into("build/dependency")
+bootJar {
+	classifier = 'boot'
 }
 
 docker {
 	name "${project.group}/${bootJar.baseName}"
-	copySpec.from(tasks.unpack.outputs).into("dependency")
-	buildArgs(['DEPENDENCY': "dependency"])
+	files new File(project.buildDir, "libs/$project.name-$project.version-boot.jar")
+	//copySpec.from(tasks.unpack.outputs).into("dependency")
+	buildArgs(['JAR': "$project.name-$project.version-boot.jar"])
 }
+
+jacoco {
+	toolVersion = "0.8.1"
+}
+
+jacocoTestReport {
+	group = "Reporting"
+	reports {
+		xml.enabled false
+		csv.enabled false
+		html.enabled true
+	}
+}
+
+
+tasks.withType(FindBugs) {
+	reports {
+		xml.enabled false
+		html.enabled true
+	}
+}
+findbugsMain.ignoreFailures false
+findbugsTest.ignoreFailures false
+
+
+tasks.clean.dependsOn(tasks.dockerClean)
+tasks.docker.dependsOn(tasks.bootJar)
