@@ -1,7 +1,7 @@
 node {
     checkout scm
 
-     stage('Test') {
+    stage('Test') {
        script {
           try {
             sh './gradlew check'
@@ -18,6 +18,7 @@ node {
 
         }
      }
+    }
 
     stage('Build') {
         sh './gradlew bootJar'
