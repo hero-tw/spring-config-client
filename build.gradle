@@ -84,3 +84,4 @@ findbugsTest.ignoreFailures false
 
 tasks.clean.dependsOn(tasks.dockerClean)
 tasks.docker.dependsOn(tasks.bootJar)
+tasks.check.finalizedBy(tasks.jacocoTestReport)
