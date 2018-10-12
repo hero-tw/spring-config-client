@@ -22,6 +22,27 @@ pipeline {
         }
     }
 
+    stage('Test') {
+       steps {
+           script {
+              try {
+                sh './gradlew check'
+              } finally {
+                publishHTML(target: [reportDir:'build/reports/tests/test',
+                                                    reportFiles: 'index.html',
+                                                    reportName: 'Unit Tests', keepAll: true])
+                publishHTML(target: [reportDir:'build/reports/findbugs',
+                                    reportFiles: 'main.html,test.html,contractTest.html',
+                                    reportName: 'FindBugs', keepAll: true])
+                publishHTML(target: [reportDir:'build/reports/jacoco/test/html',
+                    reportFiles: 'index.html',
+                    reportName: 'Code Coverage', keepAll: true])
+
+            }
+         }
+     }
+    }
+
     stage('Dockerize') {
         steps {
             sh './gradlew docker'
