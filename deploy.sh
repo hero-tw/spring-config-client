@@ -9,8 +9,6 @@ FAMILY=`sed -n 's/.*"family": "\(.*\)",/\1/p' taskdef.json`
 NAME=`sed -n 's/.*"name": "\(.*\)",/\1/p' taskdef.json`
 SERVICE_NAME=${NAME}-service
 
-
-#!/bin/bash
 DOCKER_LOGIN=`aws ecr get-login --region us-east-1`
 ${DOCKER_LOGIN}
 
