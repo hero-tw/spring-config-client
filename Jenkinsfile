@@ -34,8 +34,10 @@ node {
     }
 
     stage('Deploy') {
+     withCredentials([usernamePassword(credentialsId: 'aws-keys', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
         sh 'chmod +x ./deploy.sh'
-        sh 'AWS_SECRET_ACCESS_KEY=$AWS_KEY_PSW  AWS_ACCESS_KEY_ID=$AWS_KEY_USR ./deploy.sh'
+        sh './deploy.sh'
+      }
     }
 }
 
