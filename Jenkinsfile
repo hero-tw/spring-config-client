@@ -34,9 +34,8 @@ node {
     }
 
     stage('Deploy') {
-        sh 'AWS_SECRET_ACCESS_KEY=$AWS_KEY_PSW  AWS_ACCESS_KEY_ID=$AWS_KEY_USR /usr/local/bin/aws configure'
         sh 'chmod +x ./deploy.sh'
-        sh './deploy.sh'
+        sh 'AWS_SECRET_ACCESS_KEY=$AWS_KEY_PSW  AWS_ACCESS_KEY_ID=$AWS_KEY_USR ./deploy.sh'
     }
 }
 
