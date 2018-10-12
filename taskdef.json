@@ -1,9 +1,9 @@
 {
-  "family": "spring-poc",
+  "family": "config-demo-service-dev",
   "containerDefinitions": [
     {
       "image": "%REPOSITORY_URI%:v_%BUILD_NUMBER%",
-      "name": "spring-config-client",
+      "name": "config-demo-dev",
       "cpu": 10,
       "memory": 256,
       "essential": true,

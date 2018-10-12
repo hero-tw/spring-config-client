@@ -9,10 +9,8 @@ FAMILY=`sed -n 's/.*"family": "\(.*\)",/\1/p' taskdef.json`
 NAME=`sed -n 's/.*"name": "\(.*\)",/\1/p' taskdef.json`
 SERVICE_NAME=${NAME}-service
 
-DOCKER_LOGIN=`$(aws ecr get-login --no-include-email --region us-east-1)`
-${DOCKER_LOGIN}
+`$(aws ecr get-login --no-include-email --region us-east-1)`
 
-#Store the repositoryUri as a variable
 REPOSITORY_URI=`aws ecr describe-repositories --repository-names ${REPOSITORY_NAME} --region ${REGION} | jq .repositories[].repositoryUri | tr -d '"'`
 
 docker tag com.hero/demo:latest ${REPOSITORY_URI}:latest
