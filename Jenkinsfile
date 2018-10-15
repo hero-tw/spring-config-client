@@ -54,6 +54,24 @@ pipeline {
             sh 'AWS_SECRET_ACCESS_KEY=$AWS_KEY_PSW AWS_ACCESS_KEY_ID=$AWS_KEY_USR ./deploy.sh'
         }
     }
+    stage('Performance') {
+           steps {
+               script {
+                  try {
+                    sh './gradlew jmRun jmReport'
+                  } finally {
+                    def htmlFiles
+                    dir('build/jmeter-report/') {
+                       htmlFiles findFiles glob: '*.html'
+                    }
+                    publishHTML(target: [reportDir:'build/jmeter-report/',
+                        reportFiles: htmlFiles.join(',')
+                        reportName: 'Code Coverage', keepAll: true])
+
+                }
+             }
+         }
+        }
   }
 }
 

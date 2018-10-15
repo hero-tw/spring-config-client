@@ -4,6 +4,7 @@ buildscript {
 	}
 	repositories {
 		mavenCentral()
+		jcenter()
 		maven {
 			url "https://plugins.gradle.org/m2/"
 		}
@@ -14,8 +15,11 @@ buildscript {
 		classpath('org.springframework.cloud:spring-cloud-starter-aws-parameter-store-config:2.0.0.RELEASE')
 		classpath("org.springframework.boot:spring-boot-starter-actuator:2.0.5.RELEASE")
 	}
-}
 
+}
+plugins {
+	id "net.foragerr.jmeter" version "1.1.0-4.0"
+}
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
@@ -91,6 +95,17 @@ findbugsTest.ignoreFailures false
 tasks.clean.dependsOn(tasks.dockerClean)
 tasks.docker.dependsOn(tasks.bootJar)
 tasks.check.finalizedBy(tasks.jacocoTestReport)
+
+jmeter {
+	jmTestFiles = [file("src/test/jmeter/perf1.jmx")]
+	jmSystemPropertiesFiles = [file("src/test/jmeter/user.properties")]
+	enableExtendedReports = true
+	csvLogFile = false
+	resultFileNameTimeStamp =java.util.Optional.ofNullable(System.getenv("BUILD_NUMBER"))
+			.orElse("LOCAL")
+	reportXslt = file("src/test/jmeter/template.xslt")
+	jmUserProperties = ["hostname=blog.coop.software"]
+}
 
 
 task spinUpJMeter() {
