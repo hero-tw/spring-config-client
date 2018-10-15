@@ -26,6 +26,9 @@ public class DemoApplication {
 
 	@RequestMapping("/")
 	public String home() {
+
+		try {
+
 		CompositePropertySource awsParamSources = null;
 		OUTER:
 		for (PropertySource<?> propertySource : env.getPropertySources()) {
@@ -55,6 +58,9 @@ public class DemoApplication {
 						this.name = temp.toString();
 					}
 			}
+		}
+		} catch (IllegalStateException s) {
+			System.out.println("unable to access AWS");
 		}
 		return "Hello " + name;
 	}
