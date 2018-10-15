@@ -38,7 +38,7 @@ if [ "$SERVICES" == "" ]; then
   if [ ${DESIRED_COUNT} = "0" ]; then
     DESIRED_COUNT="1"
   fi
-  echo "aws ecs update-service --cluster ${CLUSTER} --region ${REGION} --service ${SERVICE_NAME} --task-definition ${FAMILY}:${REVISION} --desired-count ${DESIRED_COUNT}"
+  echo "aws ecs update-service --cluster ${CLUSTER} --region ${REGION} --service ${FAMILY} --task-definition ${FAMILY}:${REVISION} --desired-count ${DESIRED_COUNT}"
   aws ecs update-service --cluster ${CLUSTER} --region ${REGION} --service ${FAMILY} --task-definition ${FAMILY}:${REVISION} --desired-count ${DESIRED_COUNT}
 else
   echo "entered new service"
