@@ -4,15 +4,10 @@
     {
       "image": "%REPOSITORY_URI%:v_%BUILD_NUMBER%",
       "name": "config-demo-dev",
-      "cpu": 10,
-      "memory": 256,
+      "cpu": 512,
+      "memory": 4096,
       "essential": true,
-      "portMappings": [
-        {
-          "hostPort": 8080,
-          "containerPort": 8080
-        }
-      ],
+      "portMappings": [ { "hostPort": 8080, "containerPort": 8080 }],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
