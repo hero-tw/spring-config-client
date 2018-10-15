@@ -160,7 +160,11 @@ task spinUpJMeter() {
 				break;
 			}
 		}
-		assert match
+		if(!match){
+			logger.lifecycle("FAILRED TO SPIN UP JMETER")
+			logger.lifecycle(output.text)
+			logger.lifecycle(error.text)
+		}
 		logger.lifecycle("Deployed to $jmeterServer")
 
 		assert result == 0: "terraform apply failed with return code " + result
