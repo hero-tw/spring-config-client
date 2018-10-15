@@ -49,9 +49,10 @@ public class DemoApplication {
 				for (String propName : eps.getPropertyNames()) {
 					System.out.println("\t" + propName + " = " + eps.getProperty(propName));
 				}
-				if (eps.containsProperty("name")) {
-					this.name = Objects.requireNonNull(eps.getProperty("name")).toString();
-				}
+					String temp = Objects.requireNonNull(eps.getProperty("name")).toString();
+					if (temp !=null ) {
+						this.name = temp;
+					}
 			}
 		}
 		return "Hello " + name;
