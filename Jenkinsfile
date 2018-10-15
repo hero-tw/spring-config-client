@@ -26,7 +26,7 @@ pipeline {
        steps {
            script {
               try {
-                sh './gradlew check'
+                sh 'AWS_SECRET_ACCESS_KEY=$AWS_KEY_PSW AWS_ACCESS_KEY_ID=$AWS_KEY_USR ./gradlew check'
               } finally {
                 publishHTML(target: [reportDir:'build/reports/tests/test',
                                                     reportFiles: 'index.html',
@@ -51,7 +51,6 @@ pipeline {
 
     stage('Deploy') {
         steps {
-            sh 'echo $AWS_KEY_USR'
             sh 'AWS_SECRET_ACCESS_KEY=$AWS_KEY_PSW AWS_ACCESS_KEY_ID=$AWS_KEY_USR ./deploy.sh'
         }
     }

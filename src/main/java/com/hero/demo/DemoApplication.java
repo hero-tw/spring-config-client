@@ -11,8 +11,6 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Objects;
-
 @SpringBootApplication
 @RestController
 public class DemoApplication {
@@ -26,8 +24,6 @@ public class DemoApplication {
 
 	@RequestMapping("/")
 	public String home() {
-
-		try {
 
 		CompositePropertySource awsParamSources = null;
 		OUTER:
@@ -59,9 +55,7 @@ public class DemoApplication {
 					}
 			}
 		}
-		} catch (IllegalStateException s) {
-			System.out.println("unable to access AWS");
-		}
+
 		return "Hello " + name;
 	}
 
