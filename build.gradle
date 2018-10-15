@@ -200,7 +200,7 @@ task tearDownJMeter() {
 		if (sshForward != null) {
 			sshForward.destroy()
 		}
-		int result = pb.command("terraform", "destroy", "--auto-approve")
+		int result = pb.command("usr/local/bin/terraform", "destroy", "--auto-approve")
 				.inheritIO()
 				.start()
 				.waitFor()
