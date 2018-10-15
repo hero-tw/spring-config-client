@@ -49,9 +49,10 @@ public class DemoApplication {
 				for (String propName : eps.getPropertyNames()) {
 					System.out.println("\t" + propName + " = " + eps.getProperty(propName));
 				}
-					String temp = Objects.requireNonNull(eps.getProperty("name")).toString();
-					if (temp !=null ) {
-						this.name = temp;
+					Object temp = eps.getProperty("name");
+
+					if (temp != null) {
+						this.name = temp.toString();
 					}
 			}
 		}
