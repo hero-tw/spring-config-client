@@ -1,5 +1,4 @@
 #!/bin/bash
-set -o xtrace
 export PATH=$PATH:/usr/local/bin
 #Constants
 
