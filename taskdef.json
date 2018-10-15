@@ -3,7 +3,7 @@
   "containerDefinitions": [
     {
       "image": "%REPOSITORY_URI%:v_%BUILD_NUMBER%",
-      "name": "config-demo-dev",
+      "name": "config-demo-boo-ecs",
       "cpu": 512,
       "memory": 4096,
       "essential": true,
