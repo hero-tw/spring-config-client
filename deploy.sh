@@ -1,4 +1,5 @@
 #!/bin/bash
+set -o xtrace
 export PATH=$PATH:/usr/local/bin
 #Constants
 
@@ -34,7 +35,7 @@ echo "Read revision ${REVISION}"
 #Create or update service
 if [ "$SERVICES" == "" ]; then
   echo "entered existing service"
-  DESIRED_COUNT=`aws ecs describe-services --services ${SERVICE_NAME} --cluster ${CLUSTER} --region ${REGION} | jq .services[].desiredCount`
+  DESIRED_COUNT=`aws ecs describe-services --services ${FAMILY} --cluster ${CLUSTER} --region ${REGION} | jq .services[].desiredCount`
   if [ ${DESIRED_COUNT} = "0" ]; then
     DESIRED_COUNT="1"
   fi
