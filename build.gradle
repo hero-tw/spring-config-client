@@ -11,6 +11,8 @@ buildscript {
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 		classpath('gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.13.0')
+		classpath('org.springframework.cloud:spring-cloud-starter-aws-parameter-store-config:2.0.0.RELEASE')
+		classpath("org.springframework.boot:spring-boot-starter-actuator:2.0.5.RELEASE")
 	}
 }
 
@@ -38,6 +40,10 @@ ext {
 dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	implementation('org.springframework.cloud:spring-cloud-starter-config')
+
+	implementation("org.springframework.cloud:spring-cloud-starter-aws-parameter-store-config")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
 
