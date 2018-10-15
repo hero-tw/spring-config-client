@@ -85,3 +85,46 @@ findbugsTest.ignoreFailures false
 tasks.clean.dependsOn(tasks.dockerClean)
 tasks.docker.dependsOn(tasks.bootJar)
 tasks.check.finalizedBy(tasks.jacocoTestReport)
+
+
+task spinUpJMeter() {
+	group "Performance"
+	doFirst {
+		String runName = "performance-" +
+				java.util.Optional.ofNullable(System.getenv("BUILD_NUMBER"))
+						.orElse("LOCAL")
+
+		ProcessBuilder pb = new ProcessBuilder()
+		pb.environment().put("TF_VAR_run_name", runName);
+		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
+		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
+
+		int result = pb.command("./apply.sh")
+				.directory(new File(project.rootDir, "etc/perf"))
+				.inheritIO()
+				.start()
+				.waitFor()
+
+		assert result == 0: "terraform apply failed with return code " + result
+	}
+}
+
+task tearDownJMeter() {
+	group "Performance"
+	doLast {
+		String runName = "performance-" +
+				java.util.Optional.ofNullable(System.getenv("BUILD_NUMBER"))
+						.orElse("LOCAL")
+
+		ProcessBuilder pb = new ProcessBuilder()
+		pb.environment().put("TF_VAR_run_name", runName);
+		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
+		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
+
+		int result = pb.command("terraform", "destroy", "--auto-approve")
+				.inheritIO()
+				.start()
+				.waitFor()
+		assert result == 0: "terraform destroys failed with return code " + result
+	}
+}
