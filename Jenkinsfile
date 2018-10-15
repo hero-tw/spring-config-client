@@ -58,13 +58,13 @@ pipeline {
            steps {
                script {
                   try {
-                    sh './gradlew jmRun jmReport --stacktrace'
+                    sh './gradlew jmClean jmRun xslt --stacktrace'
                   } finally {
                     def htmlFiles
-                    dir('build/jmeter-report/') {
+                    dir('build/reports/jmeter') {
                        htmlFiles = findFiles glob: '*.html'
                     }
-                    publishHTML(target: [reportDir:'build/jmeter-report/',
+                    publishHTML(target: [reportDir:'build/reports/jmeter',
                         reportFiles: htmlFiles.join(','),
                         reportName: 'Performance Report', keepAll: true])
 

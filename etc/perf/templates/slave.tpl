@@ -3,9 +3,9 @@
 sudo apt-get update
 sudo apt-get install -y openjdk-8-jdk
 cd /home/ubuntu
-curl http://mirrors.sonic.net/apache//jmeter/binaries/apache-jmeter-5.0.tgz > jmeter.tgz
+curl https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-3.3.tgz > jmeter.tgz
 tar xvzf jmeter.tgz
-cd apache-jmeter-5.0
+cd apache-jmeter-3.3
 
 export KEYSTORE=\
 /u3+7QAAAAIAAAABAAAAAQADcm1pAAABZmlJBl4AAAUCMIIE/jAOBgorBgEEASoCEQEBBQAEggTq\
@@ -51,8 +51,13 @@ ZRTHbuIrqiJW09rbhFW9DkUeZeC7jY+XrrTVINcpkWWJS2/axJkZNX7wiWeNHPcinYOSeIewg+9F\
 
 echo $KEYSTORE | base64 -d > rmi_keystore.jks
 
+echo "server_port=55501" >> bin/jmeter.properties
+echo "server.rmi.localhostname=127.0.0.1" >> bin/jmeter.properties
+echo "server.rmi.localport=55511" >> bin/jmeter.properties
+
+
 export JVM_ARGS=-Xms256m
-nohup bin/jmeter-server &
+nohup bin/jmeter-server -Djava.rmi.server.hostname=127.0.0.1 &
 cd ..
 touch started
 
