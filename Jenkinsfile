@@ -65,7 +65,7 @@ pipeline {
                        htmlFiles = findFiles glob: '*.html'
                     }
                     publishHTML(target: [reportDir:'build/jmeter-report/',
-                        reportFiles: htmlFiles.join(',')
+                        reportFiles: htmlFiles.join(','),
                         reportName: 'Code Coverage', keepAll: true])
 
                 }
