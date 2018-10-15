@@ -62,7 +62,7 @@ pipeline {
                   } finally {
                     def htmlFiles
                     dir('build/jmeter-report/') {
-                       htmlFiles findFiles glob: '*.html'
+                       htmlFiles = findFiles glob: '*.html'
                     }
                     publishHTML(target: [reportDir:'build/jmeter-report/',
                         reportFiles: htmlFiles.join(',')
