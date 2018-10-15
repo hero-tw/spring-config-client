@@ -7,7 +7,7 @@ REPOSITORY_NAME=config-demo-dev
 CLUSTER=cluster-dev
 FAMILY=`sed -n 's/.*"family": "\(.*\)",/\1/p' taskdef.json`
 NAME=`sed -n 's/.*"name": "\(.*\)",/\1/p' taskdef.json`
-SERVICE_NAME=config-demo-service-dev
+SERVICE_NAME=${NAME}-service
 
 `$(aws ecr get-login --no-include-email --region us-east-1)`
 
@@ -24,9 +24,7 @@ sed -e "s;%BUILD_NUMBER%;${BUILD_NUMBER};g" -e "s;%REPOSITORY_URI%;${REPOSITORY_
 aws ecs register-task-definition --family ${FAMILY} --cli-input-json file://${WORKSPACE}/${NAME}-v_${BUILD_NUMBER}.json --region ${REGION}
 SERVICES=`aws ecs describe-services --services ${SERVICE_NAME} --cluster ${CLUSTER} --region ${REGION} | jq .failures[]`
 #Get latest revision
-REVISION=`aws ecs describe-task-definition --task-definition ${SERVICE_NAME} --region ${REGION} | jq .taskDefinition.revision` | tail -1
-echo "ecs describe-task-definition --task-definition ${SERVICE_NAME} --region ${REGION}"
-aws ecs describe-task-definition --task-definition ${SERVICE_NAME} --region ${REGION}
+REVISION=`aws ecs describe-task-definition --task-definition ${FAMILY} --region ${REGION} | jq .taskDefinition.revision` | tail -1
 echo "Read revision ${REVISION}"
 
 #Create or update service
