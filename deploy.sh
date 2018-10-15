@@ -8,7 +8,7 @@ REPOSITORY_NAME=config-demo-dev
 CLUSTER=cluster-dev
 FAMILY=`sed -n 's/.*"family": "\(.*\)",/\1/p' taskdef.json`
 NAME=`sed -n 's/.*"name": "\(.*\)",/\1/p' taskdef.json`
-SERVICE_NAME=${NAME}-service
+SERVICE_NAME=${REPOSITORY_NAME}-service
 
 `$(aws ecr get-login --no-include-email --region us-east-1)`
 
