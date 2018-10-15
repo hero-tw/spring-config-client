@@ -25,6 +25,7 @@ aws ecs register-task-definition --family ${FAMILY} --cli-input-json file://${WO
 SERVICES=`aws ecs describe-services --services ${SERVICE_NAME} --cluster ${CLUSTER} --region ${REGION} | jq .failures[]`
 #Get latest revision
 REVISION=`aws ecs describe-task-definition --task-definition ${NAME} --region ${REGION} | jq .taskDefinition.revision` | tail -1
+echo "Read revision ${REVISION}"
 
 #Create or update service
 if [ "$SERVICES" == "" ]; then
