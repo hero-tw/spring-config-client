@@ -132,16 +132,14 @@ xslt {
 
 task spinUpJMeter() {
 	group "Performance"
-	logging.captureStandardOutput LogLevel.LIFECYCLE
+
 	doFirst {
+		logging.captureStandardOutput LogLevel.LIFECYCLE
 		String runName = "performance-" +
 				java.util.Optional.ofNullable(System.getenv("BUILD_NUMBER"))
 						.orElse("LOCAL")
 
-		ProcessBuilder pb = new ProcessBuilder()
-		pb.environment().put("TF_VAR_run_name", runName);
-		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
-		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
+		ProcessBuilder pb = null
 
 
 		pb = new ProcessBuilder()
