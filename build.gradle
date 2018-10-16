@@ -153,6 +153,7 @@ task spinUpJMeter() {
 		pb.environment().put("TF_VAR_run_name", runName)
 		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
 		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
+		logger.lifecycle(pb.environment().toString())
 		pb.command("/usr/local/bin/terraform", "init")
 				.directory(new File(project.rootDir, "etc/perf"))
 				.inheritIO()
@@ -172,16 +173,18 @@ task spinUpJMeter() {
 				.waitFor()
 
 		pb = new ProcessBuilder()
-		pb.environment().put("TF_VAR_run_name", runName);
+		pb.environment().put("TF_VAR_run_name", runName)
 		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
 		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
-
-		int result = pb.command("/usr/local/bin/terraform", "apply", "-auto-approve", "-lock=false")
+		Process apply = pb.command("/usr/local/bin/terraform", "apply", "-auto-approve", "-lock=false")
 				.directory(new File(project.rootDir, "etc/perf"))
 				.redirectOutput(output)
 				.redirectError(error)
 				.start()
-				.waitFor()
+		new ProcessBuilder().command("tail", "-f", output.getAbsolutePath()).inheritIO().start()
+		
+		int result = apply.waitFor()
+
 		logger.info(error.text)
 
 		Pattern pattern = Pattern.compile(".*slave_1_public = (.*\\.compute-1\\.amazonaws\\.com).*")
