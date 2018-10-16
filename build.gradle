@@ -148,9 +148,12 @@ task spinUpJMeter() {
 		ProcessBuilder pb = null
 
 		if (!new File(project.rootDir, "etc/perf/.terraform").exists()) {
-
+			logger.lifecycle("Intializing terraform")
 		pb = new ProcessBuilder()
-		pb.environment().put("TF_VAR_run_name", runName)
+			pb.environment().put("AWS_ACCESS_KEY_ID", System.getenv("AWS_ACCESS_KEY_ID"))
+			pb.environment().put("AWS_SECRET_ACCESS_KEY", System.getenv("AWS_SECRET_ACCESS_KEY"))
+
+			pb.environment().put("TF_VAR_run_name", runName)
 		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
 		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
 		logger.lifecycle(pb.environment().toString())
@@ -160,8 +163,12 @@ task spinUpJMeter() {
 				.start()
 				.waitFor()
 		}
+
+		logger.lifecycle("Running plan")
 		pb = new ProcessBuilder()
-		pb.environment().put("TF_VAR_run_name", runName);
+		pb.environment().put("TF_VAR_run_name", runName)
+		pb.environment().put("AWS_ACCESS_KEY_ID", System.getenv("AWS_ACCESS_KEY_ID"))
+		pb.environment().put("AWS_SECRET_ACCESS_KEY", System.getenv("AWS_SECRET_ACCESS_KEY"))
 		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
 		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
 		File output = new File(project.buildDir, "perf.create.log")
@@ -173,6 +180,9 @@ task spinUpJMeter() {
 				.waitFor()
 
 		pb = new ProcessBuilder()
+		pb.environment().put("AWS_ACCESS_KEY_ID", System.getenv("AWS_ACCESS_KEY_ID"))
+		pb.environment().put("AWS_SECRET_ACCESS_KEY", System.getenv("AWS_SECRET_ACCESS_KEY"))
+
 		pb.environment().put("TF_VAR_run_name", runName)
 		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
 		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
@@ -182,7 +192,7 @@ task spinUpJMeter() {
 				.redirectError(error)
 				.start()
 		new ProcessBuilder().command("tail", "-f", output.getAbsolutePath()).inheritIO().start()
-		
+
 		int result = apply.waitFor()
 
 		logger.info(error.text)
@@ -232,6 +242,8 @@ task tearDownJMeter() {
 						.orElse("LOCAL")
 
 		ProcessBuilder pb = new ProcessBuilder()
+		pb.environment().put("AWS_ACCESS_KEY_ID", System.getenv("AWS_ACCESS_KEY_ID"))
+		pb.environment().put("AWS_SECRET_ACCESS_KEY", System.getenv("AWS_SECRET_ACCESS_KEY"))
 		pb.environment().put("TF_VAR_run_name", runName);
 		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
 		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
