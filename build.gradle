@@ -110,8 +110,8 @@ jmeter {
 	jmSystemPropertiesFiles = [file("src/test/jmeter/user.properties")]
 	//resultsLog = new File(project.buildDir, "jmeter-report/loadtest-results.xml")
 	csvLogFile = false
-	jmUserProperties = ["hostname=blog.coop.software"]
-	jmGlobalProperties = []
+	//jmUserProperties = ["hostname=blog.coop.software"]
+	jmGlobalProperties = ["hostname=blog.coop.software"]
 	jmSystemProperties = ["-Djava.rmi.server.hostname=127.0.0.1",
 						  "-Dserver.rmi.ssl.keystore.password=changeit",
 						  "-Dserver.rmi.ssl.keystore.file=$rmiKeystore",
