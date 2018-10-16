@@ -12,7 +12,7 @@ pipeline {
     stage('Init') {
         steps {
             checkout scm
-            sh './gradelw clean'
+            sh './gradlew clean'
         }
     }
 
