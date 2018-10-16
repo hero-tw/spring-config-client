@@ -138,9 +138,9 @@ tasks.xslt.finalizedBy(tasks.moveXsltFiles)
 
 task spinUpJMeter() {
 	group "Performance"
-
+	logging.captureStandardOutput LogLevel.LIFECYCLE
 	doFirst {
-		logging.captureStandardOutput LogLevel.LIFECYCLE
+
 		String runName = "performance-" +
 				java.util.Optional.ofNullable(System.getenv("BUILD_NUMBER"))
 						.orElse("LOCAL")
