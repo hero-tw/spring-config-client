@@ -136,6 +136,14 @@ task moveXsltFiles(type:Copy) {
 
 tasks.xslt.finalizedBy(tasks.moveXsltFiles)
 
+void configureEnv(ProcessBuilder builder){
+	pb.environment().put("AWS_ACCESS_KEY_ID", System.getenv("AWS_ACCESS_KEY_ID"))
+	pb.environment().put("AWS_SECRET_ACCESS_KEY", System.getenv("AWS_SECRET_ACCESS_KEY"))
+	pb.environment().put("TF_VAR_run_name", runName)
+	pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
+	pb.environment().put("TF_VAR_secret_key", System.getenv("AWS_SECRET_ACCESS_KEY"))
+}
+
 task spinUpJMeter() {
 	group "Performance"
 	logging.captureStandardOutput LogLevel.LIFECYCLE
@@ -150,12 +158,7 @@ task spinUpJMeter() {
 		if (!new File(project.rootDir, "etc/perf/.terraform").exists()) {
 			logger.lifecycle("Intializing terraform")
 		pb = new ProcessBuilder()
-			pb.environment().put("AWS_ACCESS_KEY_ID", System.getenv("AWS_ACCESS_KEY_ID"))
-			pb.environment().put("AWS_SECRET_ACCESS_KEY", System.getenv("AWS_SECRET_ACCESS_KEY"))
-
-			pb.environment().put("TF_VAR_run_name", runName)
-		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
-		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
+		configureEnv(pb)
 		logger.lifecycle(pb.environment().toString())
 		pb.command("/usr/local/bin/terraform", "init")
 				.directory(new File(project.rootDir, "etc/perf"))
@@ -167,11 +170,7 @@ task spinUpJMeter() {
 
 		logger.lifecycle("Running plan")
 		pb = new ProcessBuilder()
-		pb.environment().put("TF_VAR_run_name", runName)
-		pb.environment().put("AWS_ACCESS_KEY_ID", System.getenv("AWS_ACCESS_KEY_ID"))
-		pb.environment().put("AWS_SECRET_ACCESS_KEY", System.getenv("AWS_SECRET_ACCESS_KEY"))
-		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
-		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
+		configureEnv(pb)
 		File output = new File(project.buildDir, "perf.create.log")
 		File error = new File(project.buildDir, "perf.create.error.log")
 		logger.lifecycle(pb.environment().toString())
@@ -183,11 +182,7 @@ task spinUpJMeter() {
 				.waitFor()
 
 		pb = new ProcessBuilder()
-		pb.environment().put("AWS_ACCESS_KEY_ID", System.getenv("AWS_ACCESS_KEY_ID"))
-		pb.environment().put("AWS_SECRET_ACCESS_KEY", System.getenv("AWS_SECRET_ACCESS_KEY"))
-		pb.environment().put("TF_VAR_run_name", runName)
-		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
-		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
+		configureEnv(pb)
 		Process apply = pb.command("/usr/local/bin/terraform", "apply", "-auto-approve", "-lock=false")
 				.directory(new File(project.rootDir, "etc/perf"))
 				.redirectOutput(output)
