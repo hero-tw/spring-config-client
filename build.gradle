@@ -136,7 +136,7 @@ task moveXsltFiles(type:Copy) {
 
 tasks.xslt.finalizedBy(tasks.moveXsltFiles)
 
-void configureEnv(ProcessBuilder builder){
+void configureEnv(ProcessBuilder pb){
 	pb.environment().put("AWS_ACCESS_KEY_ID", System.getenv("AWS_ACCESS_KEY_ID"))
 	pb.environment().put("AWS_SECRET_ACCESS_KEY", System.getenv("AWS_SECRET_ACCESS_KEY"))
 	pb.environment().put("TF_VAR_run_name", runName)
