@@ -64,7 +64,7 @@ resource "aws_instance" "jmeter_slave1" {
       connection {
         user = "ubuntu"
         host = "${aws_instance.jmeter_slave1.public_ip}"
-        timeout = "10m"
+        timeout = "5m"
         private_key = "${file("jmeter.prv")}"
       }
       inline = [

@@ -123,7 +123,7 @@ jmeter {
 
 xslt {
 	stylesheet file('src/test/jmeter/template.xslt')
-	output new File(project.buildDir, "reports/jmeter").getAbsolutePath()
+	output 'reports/jmeter'
 	// Transform every .xml file in the "input" directory.
 	input fileTree(dir: new File(project.buildDir, "jmeter-report").getAbsolutePath(), include: '*.xml')
 
@@ -132,6 +132,7 @@ xslt {
 
 task spinUpJMeter() {
 	group "Performance"
+	logging.captureStandardOutput LogLevel.LIFECYCLE
 	doFirst {
 		String runName = "performance-" +
 				java.util.Optional.ofNullable(System.getenv("BUILD_NUMBER"))
@@ -141,8 +142,34 @@ task spinUpJMeter() {
 		pb.environment().put("TF_VAR_run_name", runName);
 		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
 		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
+
+
+		pb = new ProcessBuilder()
+		pb.environment().put("TF_VAR_run_name", runName);
+		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
+		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
+		pb.command("/usr/local/bin/terraform", "init", "--auto-approve")
+				.directory(new File(project.rootDir, "etc/perf"))
+				.inheritIO()
+				.start()
+				.waitFor()
+
+		pb.environment().put("TF_VAR_run_name", runName);
+		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
+		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
 		File output = new File(project.buildDir, "perf.create.log")
 		File error = new File(project.buildDir, "perf.create.error.log")
+		pb.command("/usr/local/bin/terraform", "plan", "--auto-approve")
+				.directory(new File(project.rootDir, "etc/perf"))
+		        .inheritIO()
+				.start()
+				.waitFor()
+
+		pb = new ProcessBuilder()
+		pb.environment().put("TF_VAR_run_name", runName);
+		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
+		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
+
 		int result = pb.command("./apply.sh")
 				.directory(new File(project.rootDir, "etc/perf"))
 				.redirectOutput(output)
@@ -182,6 +209,7 @@ task spinUpJMeter() {
 				.redirectOutput(new File(project.buildDir, "ssh.log"))
 				.redirectError(new File(project.buildDir, "ssh.log"))
 				.start()
+		sleep(500)
 	}
 }
 
@@ -200,7 +228,7 @@ task tearDownJMeter() {
 		if (sshForward != null) {
 			sshForward.destroy()
 		}
-		int result = pb.command("usr/local/bin/terraform", "destroy", "--auto-approve")
+		int result = pb.command("/usr/local/bin/terraform", "destroy", "--auto-approve")
 				.inheritIO()
 				.start()
 				.waitFor()
