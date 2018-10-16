@@ -212,7 +212,10 @@ task spinUpJMeter() {
 		logger.lifecycle("Deployed to $jmeterServer")
 
 		assert result == 0: "terraform apply failed with return code " + result
-
+		new ProcessBuilder().command("chmod", "600", new File(project.rootDir, "etc/perf/jmeter.prv").getAbsolutePath())
+				.inheritIO()
+				.start()
+				.waitFor()
 		sshForward = new ProcessBuilder()
 				.command("ssh",
 				"-o", "StrictHostKeyChecking no",
