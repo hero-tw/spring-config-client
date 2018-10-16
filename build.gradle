@@ -123,12 +123,18 @@ jmeter {
 
 xslt {
 	stylesheet file('src/test/jmeter/template.xslt')
-	output 'reports/jmeter'
+
 	// Transform every .xml file in the "input" directory.
 	input fileTree(dir: new File(project.buildDir, "jmeter-report").getAbsolutePath(), include: '*.xml')
 
 }
 
+task moveXsltFiles(type:Copy) {
+	from  fileTree(dir: project.buildDir, include: '*.html')
+	into "${buildDir}/reports/jmeter"
+}
+
+tasks.xslt.finalizedBy(tasks.moveXsltFiles)
 
 task spinUpJMeter() {
 	group "Performance"
@@ -141,23 +147,25 @@ task spinUpJMeter() {
 
 		ProcessBuilder pb = null
 
+		if (!new File(project.rootDir, "etc/perf/.terraform").exists()) {
 
 		pb = new ProcessBuilder()
-		pb.environment().put("TF_VAR_run_name", runName);
+		pb.environment().put("TF_VAR_run_name", runName)
 		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
 		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
-		pb.command("/usr/local/bin/terraform", "init", "--auto-approve")
+		pb.command("/usr/local/bin/terraform", "init")
 				.directory(new File(project.rootDir, "etc/perf"))
 				.inheritIO()
 				.start()
 				.waitFor()
-
+		}
+		pb = new ProcessBuilder()
 		pb.environment().put("TF_VAR_run_name", runName);
 		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
 		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
 		File output = new File(project.buildDir, "perf.create.log")
 		File error = new File(project.buildDir, "perf.create.error.log")
-		pb.command("/usr/local/bin/terraform", "plan", "--auto-approve")
+		pb.command("/usr/local/bin/terraform", "plan","-lock=false")
 				.directory(new File(project.rootDir, "etc/perf"))
 		        .inheritIO()
 				.start()
@@ -168,13 +176,14 @@ task spinUpJMeter() {
 		pb.environment().put("TF_VAR_access_key", System.getenv("AWS_ACCESS_KEY_ID"))
 		pb.environment().put("TF_VAR_secret_access", System.getenv("AWS_SECRET_ACCESS_KEY"))
 
-		int result = pb.command("./apply.sh")
+		int result = pb.command("/usr/local/bin/terraform", "apply", "-auto-approve", "-lock=false")
 				.directory(new File(project.rootDir, "etc/perf"))
 				.redirectOutput(output)
 				.redirectError(error)
 				.start()
 				.waitFor()
 		logger.info(error.text)
+
 		Pattern pattern = Pattern.compile(".*slave_1_public = (.*\\.compute-1\\.amazonaws\\.com).*")
 		boolean match = false
 		for (String line : output.readLines()) {
@@ -182,7 +191,7 @@ task spinUpJMeter() {
 			match = m.matches()
 			if (match) {
 				jmeterServer = m.group(1)
-				break;
+				break
 			}
 		}
 		if(!match){
@@ -226,8 +235,9 @@ task tearDownJMeter() {
 		if (sshForward != null) {
 			sshForward.destroy()
 		}
-		int result = pb.command("/usr/local/bin/terraform", "destroy", "--auto-approve")
+		int result = pb.command("/usr/local/bin/terraform", "destroy", "-auto-approve")
 				.inheritIO()
+				.directory(new File(project.rootDir, "etc/perf"))
 				.start()
 				.waitFor()
 		logger.lifecycle("TF Destroy: $result")
