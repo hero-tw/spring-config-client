@@ -52,6 +52,7 @@ public class DemoApplication {
 
 					if (temp != null) {
 						this.name = temp.toString();
+						
 					}
 			}
 		}
