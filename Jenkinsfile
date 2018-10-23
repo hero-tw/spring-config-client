@@ -1,8 +1,6 @@
 pipeline {
   agent {
-    node {
-      label 'autoscale'
-    }
+    label 'autoscale'
   }
   environment {
     AWS_KEY = credentials('aws-keys')
