@@ -17,8 +17,8 @@ pipeline {
     stage('Static Scan') {
         steps {
             sh 'AWS_SECRET_ACCESS_KEY=$AWS_KEY_PSW AWS_ACCESS_KEY_ID=$AWS_KEY_USR ./gradlew sonarqube \
-                   -Dsonar.host.url=http://a00ea9ef0d6db11e88b4502f479eb233-752534375.us-east-1.elb.amazonaws.com:9000/sonar \
-                   -Dsonar.login=3f7e8b06b5d32d9d3db2b85d5b57cf5333d1b875'
+                   -Dsonar.host.url=http://acfc447b1d7a011e88b4502f479eb233-1705871435.us-east-1.elb.amazonaws.com:9000/sonar/ \
+                   -Dsonar.login=a6be6972fd035667644e89c82a9f3b0b6d764596'
         }
     }
 
