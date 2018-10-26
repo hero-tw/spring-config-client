@@ -13,3 +13,4 @@ This project runs a configuration server using AWS parameter store as a backend
  
 ## Outstanding Items
 - Sonar token and url should be provided from an external configuration store
+- Removed jmeter steps since it was failing
