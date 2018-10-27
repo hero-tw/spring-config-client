@@ -1,4 +1,4 @@
-# k8s-sonar
+# spring-config-client
 This project runs a configuration server using AWS parameter store as a backend
 
 ##Build
